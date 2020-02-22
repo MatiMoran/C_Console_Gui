@@ -32,28 +32,28 @@ SOFTWARE.
 
 #include <stdbool.h>
 
-#define MAX_SCREEN_HORIZONTAL_SIZE 200
-#define MAX_SCREEN_VERTICAL_SIZE 60
+#define CCG_MAX_SCREEN_HORIZONTAL_SIZE 200
+#define CCG_MAX_SCREEN_VERTICAL_SIZE 60
 
-#define MAX_MENU_NAME_LEN 40
-#define MAX_ESCAPE_GRAPH_LEN 13
-#define MAX_MENU_OPTIONS (MAX_SCREEN_VERTICAL_SIZE - 2 - 2) //vertical - walls - menu title
-#define MAX_MENU_OPTION_LEN (MAX_SCREEN_HORIZONTAL_SIZE - 1 - 2 + MAX_ESCAPE_GRAPH_LEN ) // horizontal - '\0' - menu walls + bbs graph characters
+#define CCG_MAX_MENU_NAME_LEN 40
+#define CCG_MAX_ESCAPE_GRAPH_LEN 13
+#define CCG_MAX_MENU_OPTIONS (CCG_MAX_SCREEN_VERTICAL_SIZE - 2 - 2) //vertical - walls - menu title
+#define CCG_MAX_MENU_OPTION_LEN (CCG_MAX_SCREEN_HORIZONTAL_SIZE - 1 - 2 + CCG_MAX_ESCAPE_GRAPH_LEN ) // horizontal - '\0' - menu walls + bbs graph characters
 
-#define MAX_BBS_CHAR_LEN 15
+#define CCG_MAX_CCG_CHAR_LEN 15
 
-#define UNKNOW_OPTION (MAX_MENU_OPTIONS + 1)
-#define UNKNOW_MENU 255
+#define CCG_UNKNOW_OPTION (CCG_MAX_MENU_OPTIONS + 1)
+#define CCG_UNKNOW_MENU 255
 
-#define UNDERSCORE_BLINK_MS 500
+#define CCG_UNDERSCORE_BLINK_MS 500
 
-#define KEY_ENTER '\r'
-#define KEY_ESCAPE '\033'
-#define KEY_UP 'w'
-#define KEY_UP2 'W'
-#define KEY_DOWN 's'
-#define KEY_DOWN2 'S'
-#define KEY_BACKSPACE 'm'
+#define CCG_KEY_ENTER '\r'
+#define CCG_KEY_ESCAPE '\033'
+#define CCG_KEY_UP 'w'
+#define CCG_KEY_UP2 'W'
+#define CCG_KEY_DOWN 's'
+#define CCG_KEY_DOWN2 'S'
+#define CCG_KEY_BACKSPACE 'm'
 
 
 
@@ -61,7 +61,7 @@ typedef enum{
   STATE_LOW,
   STATE_SAME,
   STATE_UP
-}menu_state;
+}ccg_menu_state;
 
 typedef enum
 {
@@ -75,7 +75,7 @@ typedef enum
   COLOUR_CYAN,
   COLOUR_WHITE,
   COLOUR_END
-}colour_t;
+}ccg_colour_t;
 
 typedef enum
 {
@@ -90,25 +90,25 @@ typedef enum
   STYLE_REVERSE,
   STYLE_CONCEALED,
   STYLE_END,
-}style_t;
+}ccg_style_t;
 
 typedef struct
 {
-  colour_t background;
-  colour_t foreground;
-  colour_t edges_background;
-  colour_t edges_foreground;
-  style_t style;
-}bbs_menu_colour_t;
+  ccg_colour_t background;
+  ccg_colour_t foreground;
+  ccg_colour_t edges_background;
+  ccg_colour_t edges_foreground;
+  ccg_style_t style;
+}ccg_menu_colour_t;
 
 typedef struct
 {
   int x_margin;
   int y_margin;
-  char roof[MAX_BBS_CHAR_LEN];
-  char walls[MAX_BBS_CHAR_LEN];
-  char floor[MAX_BBS_CHAR_LEN];
-}bbs_menu_edges_t;
+  char roof[CCG_MAX_CCG_CHAR_LEN];
+  char walls[CCG_MAX_CCG_CHAR_LEN];
+  char floor[CCG_MAX_CCG_CHAR_LEN];
+}ccg_menu_edges_t;
 
 typedef struct{
 
@@ -117,42 +117,44 @@ typedef struct{
   int associated_menu;
   bool is_prompt;
   char *value_string;
-}bbs_menu_option_t;
+}ccg_menu_option_t;
 
 typedef struct{
-  bbs_menu_colour_t colors;
-  bbs_menu_edges_t edges;
-}bbs_menu_format;
+  ccg_menu_colour_t colors;
+  ccg_menu_edges_t edges;
+}ccg_menu_format;
 
 typedef struct
 {
   struct bbs_menu_t *child, *next, *prev, *father;
 
-  bbs_menu_option_t option[MAX_MENU_OPTIONS];
+  ccg_menu_option_t option[CCG_MAX_MENU_OPTIONS];
   int n_options;
   int option_max_len;
-  bbs_menu_format format;
-}bbs_menu_t;
+  ccg_menu_format format;
+}ccg_menu_t;
 
-bool bbs_itoa(char *buf, int in);
-bool bbs_is_char(const char *str);
-bool bbs_is_string(const char *str);
-void bbs_screen_get_size(int *x, int *y);
 
-int bbs_strlen(const char *str);
-bool bbs_str_colour(char *buf, style_t sty, colour_t for_col, colour_t back_col);
-void bbs_screen_get_size(int *x, int *y);
+bool ccg_itoa(char *buf, int in);
+bool ccg_is_char(const char *str);
+bool ccg_is_string(const char *str);
+int ccg_strlen(const char *str);
+bool ccg_str_colour(char *buf, ccg_style_t sty, ccg_colour_t for_col, ccg_colour_t back_col);
 
-void *bbs_menucpy(bbs_menu_t *to, const bbs_menu_t *from);
-bool bbs_option_menu_new(bbs_menu_option_t ret[], char *str_array[], void (*callbacks_array[])(char*),bool *is_prompt_array, int options_qty);
-bbs_menu_t* bbs_menu_new(bbs_menu_option_t *option_array ,int options_qty, bbs_menu_colour_t colors, bbs_menu_edges_t edges);
-void bbs_menu_delete(bbs_menu_t *menu);
-void bbs_menu_show(const bbs_menu_t *menu);
-void bbs_menu_show_at(const bbs_menu_t *menu, int x_pos, int y_pos);
-void bbs_screen_clear();
+void ccg_screen_get_size(int *x, int *y);
+void ccg_screen_clear();
 
-bool bbs_add_menu_to_menu(bbs_menu_t *father,bbs_menu_t *child, int assosiated_option);
-void bbs_start();
+void ccg_menu_show(const ccg_menu_t *menu);
+void ccg_menu_show_at(const ccg_menu_t *menu, int x_pos, int y_pos);
+
+void *ccg_menucpy(ccg_menu_t *to, const ccg_menu_t *from);
+
+bool ccg_option_menu_new(ccg_menu_option_t ret[], char *str_array[], void (*callbacks_array[])(char*),bool *is_prompt_array, int options_qty);
+void ccg_menu_delete(ccg_menu_t *menu);
+ccg_menu_t* ccg_menu_new(ccg_menu_option_t *option_array ,int options_qty, ccg_menu_colour_t colors, ccg_menu_edges_t edges);
+bool ccg_add_menu_to_menu(ccg_menu_t *father,ccg_menu_t *child, int assosiated_option);
+
+void ccg_start();
 
 
 #endif /* C_CONSOLE_GUI_H_ */
